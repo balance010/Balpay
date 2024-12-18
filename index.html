@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B Banking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: linear-gradient(45deg, #ffd700, #ffb800, #ffcc5c, #fff3b0);
+      background-size: 400% 400%;
+      animation: gradientAnimation 15s ease infinite;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+    }
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .welcome {
+      font-size: 3rem;
+      font-weight: bold;
+      color: white;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: fadeInScale 2s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .form-container button:hover {
+      background-color: #0056b3;
+    }
+
+    .success-message, .account-page h1, .functionalities-page h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .account-details {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .button-container button {
+      padding: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background: linear-gradient(45deg, #6a11cb, #2575fc);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    .button-container button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(45deg, #2575fc, #6a11cb);
+    }
+  </style>
+</head>
+<body>
+  <!-- Welcome Page -->
+  <div id="welcome-page" class="page">
+    <h1 class="welcome">Welcome</h1>
+  </div>
+
+  <!-- Registration Page -->
+  <div id="register-page" class="page hidden">
+    <h1 class="register-header">B Banking</h1>
+    <div class="form-container">
+      <h2>Create Your Account</h2>
+      <form id="register-form">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Page -->
+  <div id="loading-page" class="page hidden">
+    <div class="loader"></div>
+    <p>Processing...</p>
+  </div>
+
+  <!-- Success Page -->
+  <div id="success-page" class="page hidden">
+    <h1 class="success-message">Your registration was successful!</h1>
+  </div>
+
+  <!-- Home Page -->
+  <div id="home-page" class="page hidden">
+    <div class="form-container">
+      <h2>More Info</h2>
+      <form id="more-info-form">
+        <input type="text" id="user-name" placeholder="Name" required />
+        <input type="tel" id="phone-number" placeholder="Phone Number" required />
+        <input type="password" id="pin-code" placeholder="Choose PIN Code" required />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Account Page -->
+  <div id="account-page" class="page hidden">
+    <h1 class="account-message">Account Created Successfully!</h1>
+    <p class="account-details">This is your account number:</p>
+    <h2 id="account-number" class="account-number"></h2>
+  </div>
+
+  <!-- Functionalities Page -->
+  <div id="functionalities-page" class="page hidden">
+    <h1 class="functionalities-header">Choose Your Action</h1>
+    <div class="button-container">
+      <button>Pay Bills</button>
+      <button>Airtime</button>
+      <button>Data</button>
+      <button>Transfer</button>
+      <button>Top-Up</button>
+    </div>
+  </div>
+
+  <script>
+    const welcomePage = document.getElementById('welcome-page');
+    const registerPage = document.getElementById('register-page');
+    const loadingPage = document.getElementById('loading-page');
+    const successPage = document.getElementById('success-page');
+    const homePage = document.getElementById('home-page');
+    const accountPage = document.getElementById('account-page');
+    const functionalitiesPage = document.getElementById('functionalities-page');
+    const registerForm = document.getElementById('register-form');
+    const moreInfoForm = document.getElementById('more-info-form');
+    const accountNumberDisplay = document.getElementById('account-number');
+
+    // Transition to registration page
+    setTimeout(() => {
+      welcomePage.classList.add('hidden');
+      registerPage.classList.remove('hidden');
+    }, 3000);
+
+    // Handle registration form submission
+    registerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      registerPage.classList.add('hidden');
+      loadingPage.classList.remove('hidden');
+
+      // Show success page after 2 seconds
+      setTimeout(() => {
+        loadingPage.classList.add('hidden');
+        successPage.classList.remove('hidden');
+
+        // Show home page after another 3 seconds
+        setTimeout(() => {
+          successPage.classList.add('hidden');
+          homePage.classList.remove('hidden');
+        }, 3000);
+      }, 2000);
+    });
+
+    // Handle more info form submission
+    moreInfoForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const phoneNumber = document.getElementById('phone-number').value;
+
+      // Generate account number
+      const accountNumber = phoneNumber.startsWith('0') 
+        ? phoneNumber.slice(1) 
+        : phoneNumber;
+
+      // Display account number
+      homePage.classList.add('hidden');
+      accountNumberDisplay.textContent = accountNumber;
+      accountPage.classList.remove('hidden');
+
+      // Transition to functionalities page after 3 seconds
+      setTimeout(() => {
+        accountPage.classList.add('hidden');
+        functionalitiesPage.classList.remove('hidden');
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
